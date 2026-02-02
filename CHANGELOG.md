@@ -1,3 +1,9 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* This release includes:
+* * The HelpScout Beacon support for iOS
+
+## 0.0.2
+
+* This release includes:
+* * Added the HelpScout Beacon support for Android
