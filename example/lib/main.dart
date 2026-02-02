@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:help_scout_flutter/help_scout_flutter.dart';
+import 'package:help_scout_flutter/model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,9 +16,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late final HelpScoutFlutter _helpScoutFlutterPlugin;
 
-  initBeacon() {
+  void initBeacon() {
+    // Initialize with beacon ID and user info
+    final user = HSBeaconUser(
+      email: 'john@example.com',
+      name: 'John Doe',
+      company: 'Example Corp',
+      jobTitle: 'Developer',
+      avatar: 'https://example.com/avatar.png',
+    );
+
     _helpScoutFlutterPlugin = HelpScoutFlutter(
       beaconId: '*******beacon-id******',
+      user: user,
     );
   }
 
@@ -31,19 +42,21 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Help Scout example app'),
-        ),
+        appBar: AppBar(title: const Text('Help Scout Example App')),
         body: Center(
           child: ElevatedButton(
-            onPressed: () {
-              _helpScoutFlutterPlugin
-                  .initialize()
-                  .then((value) => _helpScoutFlutterPlugin.open());
+            onPressed: () async {
+              // Initialize and open the beacon
+              final initResult = await _helpScoutFlutterPlugin.initialize();
+              debugPrint('Initialize result: $initResult');
+
+              final openResult = await _helpScoutFlutterPlugin.open();
+              debugPrint('Open result: $openResult');
             },
             style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateColor.resolveWith((states) => Colors.blue[700]!),
+              backgroundColor: WidgetStateProperty.resolveWith(
+                (states) => Colors.blue[700]!,
+              ),
             ),
             child: const Text('HelpScout Button'),
           ),
