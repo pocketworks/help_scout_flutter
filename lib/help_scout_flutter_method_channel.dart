@@ -20,8 +20,7 @@ class MethodChannelHelpScoutFlutter extends HelpScoutFlutterPlatform {
   @override
   Future<String?> open(String beaconId) async {
     try {
-      final result = await _channel
-          .invokeMethod<String>('openBeacon', {'beaconId': beaconId});
+      final result = await _channel.invokeMethod<String>('openBeacon', {'beaconId': beaconId});
       return result;
     } on PlatformException catch (e) {
       return 'Failed to open beacon: ${e.message}';

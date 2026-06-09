@@ -62,6 +62,12 @@ class HelpScoutFlutterPlugin: FlutterPlugin, MethodCallHandler {
         val jobTitle = arguments["jobTitle"] as String?
 
         Beacon.identify(email, name, company, jobTitle, avatarString)
+
+        @Suppress("UNCHECKED_CAST")
+        val attributes = arguments["attributes"] as? Map<String, String>
+        attributes?.forEach { (key, value) ->
+            Beacon.addAttributeWithKey(key, value)
+        }
     }
 
     private fun openBeacon(beaconId: String) {

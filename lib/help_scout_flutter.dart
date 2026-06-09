@@ -9,8 +9,7 @@ class HelpScoutFlutter {
   HelpScoutFlutter({required this.beaconId, required this.user});
 
   /// Initialize the beacon
-  Future<String?> initialize() =>
-      HelpScoutFlutterPlatform.instance.initialize(user, beaconId);
+  Future<String?> initialize() => HelpScoutFlutterPlatform.instance.initialize(user, beaconId);
 
   /// Open the beacon UI
   Future<String?> open() => HelpScoutFlutterPlatform.instance.open(beaconId);

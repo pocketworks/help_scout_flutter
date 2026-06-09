@@ -1,3 +1,8 @@
+## Unreleased
+
+* Added support for custom user attributes (diagnostics) via `HSBeaconUser.attributes`,
+  forwarded to the Beacon as custom attributes on iOS and Android.
+
 ## 0.0.1
 
 * This release includes:
