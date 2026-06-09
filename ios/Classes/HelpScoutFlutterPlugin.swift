@@ -45,7 +45,13 @@ public class HelpScoutFlutterPlugin: NSObject, FlutterPlugin {
     user.avatar = avatar
     user.company = company
     user.jobTitle = jobTitle
-        
+
+    if let attributes = arguments["attributes"] as? [String: String] {
+      for (key, value) in attributes {
+        user.addAttribute(withKey: key, value: value)
+      }
+    }
+
     HSBeacon.identify(user)
   }
     

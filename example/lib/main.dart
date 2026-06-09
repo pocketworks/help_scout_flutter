@@ -24,12 +24,13 @@ class _MyAppState extends State<MyApp> {
       company: 'Example Corp',
       jobTitle: 'Developer',
       avatar: 'https://example.com/avatar.png',
+      // Optional diagnostics shown to support agents. Keys must match your
+      // Help Scout Customer Property IDs (letters/numbers/_/- only, no spaces),
+      // and values must be strings — format your own data before passing it.
+      attributes: {'app_version': '1.0.0', 'platform': 'iOS', 'plan': 'premium'},
     );
 
-    _helpScoutFlutterPlugin = HelpScoutFlutter(
-      beaconId: '*******beacon-id******',
-      user: user,
-    );
+    _helpScoutFlutterPlugin = HelpScoutFlutter(beaconId: '*******beacon-id******', user: user);
   }
 
   @override
@@ -53,11 +54,7 @@ class _MyAppState extends State<MyApp> {
               final openResult = await _helpScoutFlutterPlugin.open();
               debugPrint('Open result: $openResult');
             },
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith(
-                (states) => Colors.blue[700]!,
-              ),
-            ),
+            style: ButtonStyle(backgroundColor: WidgetStateProperty.resolveWith((states) => Colors.blue[700]!)),
             child: const Text('HelpScout Button'),
           ),
         ),

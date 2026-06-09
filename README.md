@@ -22,14 +22,42 @@ dependencies:
 ### Super simple to use
 
 ```dart
- ElevatedButton(
-    onPressed: () {
-        HelpScoutFlutter _helpScoutFlutterPlugin = HelpScoutFlutter(beaconId: '*******beacon-id******',);
-        _helpScoutFlutter.initialize()
-              .then((value) => _helpScoutFlutter.open());
-    },
-    style: ButtonStyle(
-    backgroundColor: MaterialStateColor.resolveWith((states) => Colors.blue[700]!)),
-    child: const Text('HelpScout Button'),
-),
+final helpScout = HelpScoutFlutter(
+  beaconId: '*******beacon-id******',
+  user: HSBeaconUser(email: 'john@example.com', name: 'John Doe'),
+);
+
+await helpScout.initialize();
+await helpScout.open();
 ```
+
+### Custom attributes (diagnostics)
+
+Pass app-specific diagnostics via `HSBeaconUser.attributes`. They are forwarded
+to Help Scout as custom attributes and shown to support agents in the Customer
+Properties sidebar.
+
+```dart
+final user = HSBeaconUser(
+  email: 'john@example.com',
+  attributes: {
+    'app_version': '1.0.0',
+    'platform': 'iOS',
+    'plan': 'premium',
+  },
+);
+
+final helpScout = HelpScoutFlutter(beaconId: '*******beacon-id******', user: user);
+await helpScout.initialize();
+```
+
+The values are passed straight to the Help Scout Beacon SDK, which imposes the
+following rules:
+
+- **Values must be strings.** Format booleans, dates and numbers yourself before
+  passing them (e.g. `'unlimited': isUnlimited ? 'Yes' : 'No'`).
+- **Maximum of 30 attributes.**
+- **`name` and `email` are reserved keys.**
+- **For values to sync to the Customer Properties sidebar, each key must match a
+  Customer Property ID** — letters, numbers, hyphens and underscores only, with
+  no spaces. Map a display label like `App Version` to a key like `app_version`.

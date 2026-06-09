@@ -22,7 +22,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Beacon: e6793fcd1fefe8fe9436a0bad3e79e7678e16105
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  help_scout_flutter: e63d04448e87a5569900df9f3df1570a96c80abc
+  help_scout_flutter: ddaae6149d4d7f2553a737061062a2ceeb4b9b47
 
 PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
 
