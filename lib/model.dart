@@ -19,6 +19,13 @@ class HSBeaconUser {
   ///   like `App Version` to a key like `app_version`).
   final Map<String, String>? attributes;
 
+  /// Attribute keys reserved by the Beacon SDK; these map to dedicated user
+  /// fields and are stripped from custom [attributes] before sending.
+  static const reservedAttributeKeys = {'name', 'email'};
+
+  /// Maximum number of custom attributes supported by the Beacon SDK.
+  static const maxAttributes = 30;
+
   HSBeaconUser({required this.email, this.name, this.company, this.jobTitle, this.avatar, this.attributes});
 
   Map<String, dynamic> toMap() {
@@ -29,9 +36,18 @@ class HSBeaconUser {
       'jobTitle': jobTitle,
       'avatar': avatar,
     };
-    if (attributes != null && attributes!.isNotEmpty) {
-      map['attributes'] = attributes;
+    final sanitized = _sanitizeAttributes(attributes);
+    if (sanitized.isNotEmpty) {
+      map['attributes'] = sanitized;
     }
     return map;
+  }
+
+  /// Removes reserved keys and caps the result to [maxAttributes] so callers
+  /// cannot accidentally send reserved keys or exceed the SDK limit.
+  static Map<String, String> _sanitizeAttributes(Map<String, String>? attributes) {
+    if (attributes == null || attributes.isEmpty) return const {};
+    final entries = attributes.entries.where((entry) => !reservedAttributeKeys.contains(entry.key)).take(maxAttributes);
+    return Map.fromEntries(entries);
   }
 }

@@ -45,6 +45,10 @@ void main() {
       HelpScoutFlutterPlatform.instance = fakePlatform;
     });
 
+    tearDown(() {
+      HelpScoutFlutterPlatform.instance = initialPlatform;
+    });
+
     test('initialize delegates user (with attributes) and beaconId', () async {
       final user = HSBeaconUser(email: 'john@example.com', attributes: {'app_version': '1.0.0', 'platform': 'iOS'});
       final plugin = HelpScoutFlutter(beaconId: 'beacon-123', user: user);
@@ -93,12 +97,35 @@ void main() {
       expect(map.containsKey('attributes'), isFalse);
     });
 
-    test('includes attributes verbatim when populated', () {
+    test('includes non-reserved attributes when populated', () {
       final attributes = {'app_version': '1.0.0', 'plan': 'premium'};
 
       final map = HSBeaconUser(email: 'a@b.com', attributes: attributes).toMap();
 
       expect(map['attributes'], attributes);
+    });
+
+    test('strips reserved keys (name, email) from attributes', () {
+      final map = HSBeaconUser(
+        email: 'a@b.com',
+        attributes: {'name': 'spoofed', 'email': 'spoofed@b.com', 'app_version': '1.0.0'},
+      ).toMap();
+
+      expect(map['attributes'], {'app_version': '1.0.0'});
+    });
+
+    test('omits attributes when only reserved keys are supplied', () {
+      final map = HSBeaconUser(email: 'a@b.com', attributes: {'name': 'spoofed'}).toMap();
+
+      expect(map.containsKey('attributes'), isFalse);
+    });
+
+    test('caps attributes at the SDK maximum of 30', () {
+      final attributes = {for (var i = 0; i < 40; i++) 'key_$i': 'value_$i'};
+
+      final map = HSBeaconUser(email: 'a@b.com', attributes: attributes).toMap();
+
+      expect((map['attributes'] as Map).length, HSBeaconUser.maxAttributes);
     });
   });
 }
