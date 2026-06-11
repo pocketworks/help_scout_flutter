@@ -64,7 +64,7 @@ class HelpScoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
             }
         } catch (e: Exception) {
-            result.error("BEACON_ERROR", e.message, null)
+            result.error("BEACON_ERROR", e.message ?: e.toString(), null)
         }
     }
 
@@ -103,6 +103,7 @@ class HelpScoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+        activity = null
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {

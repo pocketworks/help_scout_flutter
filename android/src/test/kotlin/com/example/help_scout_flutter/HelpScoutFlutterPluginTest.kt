@@ -3,7 +3,9 @@ package com.example.help_scout_flutter
 import android.app.Activity
 import com.helpscout.beacon.Beacon
 import com.helpscout.beacon.ui.BeaconActivity
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.jupiter.api.AfterEach
@@ -119,6 +121,17 @@ class HelpScoutFlutterPluginTest {
     }
 
     @Test
+    fun `sdk exception without a message still produces a non-null error message`() {
+        beaconStatic.`when`<Unit> { Beacon.identify(anyString(), any(), any(), any(), any()) }
+            .thenThrow(RuntimeException())
+        val arguments = mapOf("beaconId" to "beacon-123", "email" to "user@example.com")
+
+        plugin.onMethodCall(MethodCall("initialize", arguments), result)
+
+        verify(result).error(eq("BEACON_ERROR"), eq("java.lang.RuntimeException"), isNull())
+    }
+
+    @Test
     fun `initialize surfaces sdk exceptions as beacon error`() {
         beaconStatic.`when`<Unit> { Beacon.identify(anyString(), any(), any(), any(), any()) }
             .thenThrow(RuntimeException("identify() called with null or empty email"))
@@ -169,6 +182,25 @@ class HelpScoutFlutterPluginTest {
             eq("Cannot open Beacon: plugin is not attached to an Activity"),
             isNull(),
         )
+    }
+
+    @Test
+    fun `openBeacon after engine detached returns no activity error`() {
+        val engineBinding = mock(FlutterPlugin.FlutterPluginBinding::class.java)
+        `when`(engineBinding.binaryMessenger).thenReturn(mock(BinaryMessenger::class.java))
+        plugin.onAttachedToEngine(engineBinding)
+        attachActivity()
+        plugin.onDetachedFromEngine(engineBinding)
+        val arguments = mapOf("beaconId" to "beacon-123")
+
+        plugin.onMethodCall(MethodCall("openBeacon", arguments), result)
+
+        verify(result).error(
+            eq("NO_ACTIVITY"),
+            eq("Cannot open Beacon: plugin is not attached to an Activity"),
+            isNull(),
+        )
+        beaconActivityStatic.verify({ BeaconActivity.open(any()) }, never())
     }
 
     @Test
